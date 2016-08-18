@@ -574,7 +574,7 @@ class POP3(basic.LineOnlyReceiver, policies.TimeoutMixin):
         """
         try:
             return self.processCommand(*line.split(' '))
-        except (ValueError, AttributeError, POP3Error, TypeError), e:
+        except (ValueError, AttributeError, POP3Error, TypeError) as e:
             log.err()
             self.failResponse('bad protocol or server: %s: %s' % (e.__class__.__name__, e))
 
@@ -776,7 +776,7 @@ class POP3(basic.LineOnlyReceiver, policies.TimeoutMixin):
         ).addErrback(self._ebUnexpected)
 
 
-    def _cbMailbox(self, (interface, avatar, logout), user):
+    def _cbMailbox(self, ab, user):
         """
         Complete successful authentication.
 
@@ -796,6 +796,7 @@ class POP3(basic.LineOnlyReceiver, policies.TimeoutMixin):
         @type user: L{bytes}
         @param user: The user being authenticated.
         """
+        (interface, avatar, logout)=ab
         if interface is not IMailbox:
             self.failResponse('Authentication failed')
             log.err("_cbMailbox() called with an interface other than IMailbox")

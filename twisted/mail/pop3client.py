@@ -109,7 +109,7 @@ class _ListSetter:
         self.L = L
 
 
-    def setitem(self, (item, value)):
+    def setitem(self, ab):
         """
         Add the value at the specified position, padding out missing entries.
 
@@ -120,6 +120,7 @@ class _ListSetter:
         @type value: L{object}
         @param value: The value to put in the list.
         """
+        (item, value)=ab
         diff = item - len(self.L) + 1
         if diff > 0:
             self.L.extend([None] * diff)

@@ -7,14 +7,13 @@
 """
 Support for bounce message generation.
 """
-
-import StringIO
-import rfc822
+import email
+from io import StringIO
 import time
 import os
 
 
-from twisted.mail import smtp
+from . import smtp
 
 BOUNCE_FORMAT = """\
 From: postmaster@%(failedDomain)s
@@ -63,7 +62,7 @@ I'm sorry, the following address has permanent errors: %(failedTo)s.
 I've given up, and I will not retry the message again.
 ''' % {'failedTo': failedTo}
 
-    failedAddress = rfc822.AddressList(failedTo)[0][1]
+    failedAddress = email.utils.getaddresses(failedTo)[0][1]
     data = {
         'boundary': "%s_%s_%s" % (time.time(), os.getpid(), 'XXXXX'),
         'ctime': time.ctime(time.time()),
@@ -76,7 +75,7 @@ I've given up, and I will not retry the message again.
         'transcript': transcript,
         }
 
-    fp = StringIO.StringIO()
+    fp = StringIO()
     fp.write(BOUNCE_FORMAT % data)
     orig = message.tell()
     message.seek(2, 0)

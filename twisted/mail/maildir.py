@@ -14,10 +14,7 @@ from hashlib import md5
 
 from zope.interface import implementer
 
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+import io as StringIO
 
 from twisted.mail import pop3
 from twisted.mail import smtp
@@ -93,15 +90,15 @@ def initializeMaildir(dir):
     """
     Create a maildir user directory if it doesn't already exist.
 
-    @type dir: L{bytes}
+    @type dir: L{str}
     @param dir: The path name for a user directory.
     """
     if not os.path.isdir(dir):
-        os.mkdir(dir, 0700)
+        os.mkdir(dir, 0o700)
         for subdir in ['new', 'cur', 'tmp', '.Trash']:
-            os.mkdir(os.path.join(dir, subdir), 0700)
+            os.mkdir(os.path.join(dir, subdir), 0o700)
         for subdir in ['new', 'cur', 'tmp']:
-            os.mkdir(os.path.join(dir, '.Trash', subdir), 0700)
+            os.mkdir(os.path.join(dir, '.Trash', subdir), 0o700)
         # touch
         open(os.path.join(dir, '.Trash', 'maildirfolder'), 'w').close()
 
@@ -459,7 +456,7 @@ class _MaildirMailboxAppendMessageTask:
             try:
                 self.osrename(self.tmpname, newname)
                 break
-            except OSError, (err, estr):
+            except OSError as (err, estr):
                 import errno
                 # if the newname exists, retry with a new newname.
                 if err != errno.EEXIST:
@@ -484,7 +481,7 @@ class _MaildirMailboxAppendMessageTask:
         while True:
             self.tmpname = os.path.join(self.mbox.path, "tmp", _generateMaildirName())
             try:
-                self.fh = self.osopen(self.tmpname, attr, 0600)
+                self.fh = self.osopen(self.tmpname, attr, 0o600)
                 return None
             except OSError:
                 tries += 1
@@ -626,7 +623,7 @@ class MaildirMailbox(pop3.Mailbox):
         for (real, trash) in self.deleted.items():
             try:
                 os.rename(trash, real)
-            except OSError, (err, estr):
+            except OSError as (err, estr):
                 import errno
                 # If the file has been deleted from disk, oh well!
                 if err != errno.ENOENT:
