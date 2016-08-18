@@ -56,6 +56,7 @@ def generateBounce(message, failedFrom, failedTo, transcript=''):
         message.  The destination of the bounce message is the originator of
         the undeliverable message.
     """
+
     if not transcript:
         transcript = '''\
 I'm sorry, the following address has permanent errors: %(failedTo)s.
