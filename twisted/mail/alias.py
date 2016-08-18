@@ -756,7 +756,6 @@ class AliasGroup(AliasBase):
             else:
                 self.aliases.append(AddressAlias(addr, *args))
 
-
     def __len__(self):
         """
         Return the number of aliases in the group.
@@ -765,7 +764,6 @@ class AliasGroup(AliasBase):
         @return: The number of aliases in the group.
         """
         return len(self.aliases)
-
 
     def __str__(self):
         """
